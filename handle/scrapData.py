@@ -17,7 +17,7 @@ class Block:
         self.block_number = block_number
         self.data = []
 
-    def scrape_data(self):
+    def scrapData(self):
 
         # Construct the URL for the block page
         url = f'https://etherscan.io/block/{self.block_number}'
@@ -41,11 +41,11 @@ class Block:
 
         return self.data
 
-    def display_data(self):
+    def displayData(self):
         for item in self.data:
             print(item)
 
-    def write_to_csv(self, step):
+    def writeToCsv(self, step):
         # Set the filename for the CSV file
         filename = f'data/eth{step}.csv'
 

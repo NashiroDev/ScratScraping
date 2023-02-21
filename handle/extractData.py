@@ -4,7 +4,7 @@ class Model:
         self.dataDict = dict()
         self.sortedDataDict = dict()
     
-    def read_file(self):
+    def readFile(self):
         with open(self.filename, 'r') as file:
             data = file.read()
             fieldLine = data.split('\n')
@@ -25,7 +25,7 @@ class Model:
 
         return self.dataDict
     
-    def sort_fields(self, fields=[]):
+    def sortFields(self, fields=[]):
         self.sortedDataDict = dict()
 
         for key, value in self.dataDict.items():
@@ -37,16 +37,19 @@ class Model:
 
         return fields
     
-    def create_view(self, fields):
-        self.sort_fields(fields)
+    def createView(self, fields):
+        self.sortFields(fields)
+
+        origin = self.filename.split('h', 1)
+        origin = origin[-1].split('.', 1)
 
         if not fields == []:
-            fileName = '_eth'
+            fileName = f'_eth{origin[0]}'
             for field in fields:
                 fileName += field.replace(' ', '')
 
             fileName += '.csv'
-            path = f'./data/{fileName}'
+            path = f'data/model/{fileName}'
             with open(path, 'w') as file:
 
                 for key, value in self.sortedDataDict.items():
@@ -60,6 +63,6 @@ class Model:
         else:
             print("Invalid: must have at least one filter to create a view.")
 
-# test = Model('./data/eth1.csv')
-# test.read_file()
-# test.create_view(['Difficulty'])
+    def deleteView(self):
+        pass
+    #list .csv file in model then choose then confirm delete
