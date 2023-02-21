@@ -1,3 +1,5 @@
+from os import listdir
+from os import remove
 class Model:
     def __init__(self, filename):
         self.filename = filename
@@ -62,7 +64,48 @@ class Model:
 
         else:
             print("Invalid: must have at least one filter to create a view.")
+    
+    def visualizeViews(self):
+        files = listdir('data/model')
+        count = 1
+        for file in files:
+            print(count, ' : ' , file)
+            count += 1
+        return files
 
     def deleteView(self):
-        pass
-    #list .csv file in model then choose then confirm delete
+        files = self.visualizeViews()
+        loop = 1
+        
+        while loop:
+            try:
+                userInput = str(input(f"Please enter the id of the file to delete or !q to quit : "))
+                if '!q' in userInput:
+                    loop = 0
+                elif int(userInput) < 1 or int(userInput) > len(files):
+                    print(f"Error: Input must be between 1 and {len(files)}")
+                else: loop = 0
+            except ValueError:
+                print("Error: Please enter an integer in the correct range.")
+
+        if userInput != '!q':
+            loop = 1
+
+            while loop:
+                try:
+                    userConfirm = str(input(f"Are you sure you want to delete {files[int(userInput)-1]} ? [Y/N] : "))
+                    if (userConfirm.lower() == 'y' or userConfirm.lower()) == 'n':
+                        loop = 0
+
+                        if userConfirm.lower() == 'y':
+                            userConfirm = True
+                        else: userConfirm = False
+                        
+                    else: print(f"Error: Input must be y or n")
+                except ValueError:
+                    print("Error: Please enter a string.")
+
+            if userConfirm:
+                pathToDelete = f'/data/model/{files[int(userInput)-1]}'
+                remove(pathToDelete)
+                print("File deleted successfully.")

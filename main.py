@@ -23,11 +23,11 @@ def makeModel(modelPath, fields):
 
 ####### Prompt //~6250B/j moy //PoS : 15537393
 
-# s=5628125 #début scraping
-# e=16670590 #finishing
-# p=1 #Step/Nom du fichier de save eth{}.csv
-# multipleScrapAndSave(s, e, p)
+s=8846875 #début scraping
+e=16678211 #finishing
+p=3125 #Step/Nom du fichier de save eth{}.csv
+multipleScrapAndSave(s, e, p)
 
-# makeModel('data/eth3125.csv', ['Difficulty'])
+# makeModel('data/eth1.csv', ['Difficulty', 'Ether Price', 'Mined by'])
 
 ##Make : interface, 
