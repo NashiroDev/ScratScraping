@@ -23,7 +23,7 @@ def makeModel(modelPath, fields):
 
 ####### Prompt //~6250B/j moy //PoS : 15537393
 
-s=8846875 #début scraping
+s=14900000 #début scraping
 e=16678211 #finishing
 p=3125 #Step/Nom du fichier de save eth{}.csv
 multipleScrapAndSave(s, e, p)

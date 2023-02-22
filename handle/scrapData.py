@@ -29,6 +29,7 @@ class Block:
         # Find all the rows with the class name "row.mb-5"
         rows = self.driver.find_elements('class name', 'row.mb-4')
         rows.append(self.driver.find_element('id', 'ContentPlaceHolder1_closingEtherPrice'))
+        # rows.append(self.driver.find_element('class', 'row'))
 
         # Wash data
         for row in rows:
@@ -58,5 +59,7 @@ class Block:
             if file_exists:
                 for x in self.data:
                     if not x[0] == 'Extra Data':
+                        if x[0] == 'Burnt Fees' and not x[1][0] in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
+                            x[1] = x[1][2:]
                         header = x[0] + ':' + x[1]
                         file.write(header + '\n')
