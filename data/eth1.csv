@@ -31539,3 +31539,29 @@ Gas Limit:29,970,647
 Base Fee Per Gas:0.000000038649614674 ETH (38.649614674 Gwei)
 Burnt Fees:0.094826906901888348 ETH
 Ether Price:$2,892.36 / ETH
+Block Height:14950000
+Status:Finalized
+Timestamp:255 days 23 hrs ago (Jun-12-2022 11:59:26 AM +UTC)
+Mined by:Hiveon Pool in 21 secs
+Block Reward:2.06162931413428265 ETH (2 + 0.387885095973537324 - 0.326255781839254674)
+Uncles Reward:0
+Difficulty:14,455,086,198,611,846
+Total Difficulty:51,510,562,219,715,318,413,290
+Gas Used:13,832,538(46.11%)-8% Gas Target
+Gas Limit:30,000,000
+Base Fee Per Gas:0.000000023586111373 ETH (23.586111373 Gwei)
+Burnt Fees:0.326255781839254674 ETH
+Ether Price:$1,434.02 / ETH
+Block Height:15459375
+Status:Finalized
+Timestamp:174 days 21 hrs ago (Sep-02-2022 01:18:54 PM +UTC)
+Mined by:BTC.com Pool 2 in 13 secs
+Block Reward:2.093271588111498835 ETH (2 + 0.344378583976989431 - 0.251106995865490596)
+Uncles Reward:0
+Difficulty:12,590,610,917,363,809
+Total Difficulty:57,791,350,478,833,476,745,579
+Gas Used:16,954,398(56.40%)+13% Gas Target
+Gas Limit:30,058,591
+Base Fee Per Gas:0.000000014810729102 ETH (14.810729102 Gwei)
+Burnt Fees:0.251106995865490596 ETH
+Ether Price:$1,574.02 / ETH

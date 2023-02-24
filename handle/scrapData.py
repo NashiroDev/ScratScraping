@@ -2,6 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.wait import WebDriverWait
 import os
+from selenium.webdriver.chrome.options import Options
 
 class Block:
     def __init__(self, block_number):
@@ -11,6 +12,12 @@ class Block:
         # Create a Service object
         s = Service(executable_path=path_to_chromedriver)
 
+        # options = Options()
+        # options.add_argument('--headless')
+        # options.add_argument('--no-sandbox')
+        # options.add_argument('--disable-dev-shm-usage')
+        # options.add_argument('--disable-gpu')
+    
         # Pass the Service object to the Chrome constructor
         self.driver = webdriver.Chrome(service=s)
 

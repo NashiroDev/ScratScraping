@@ -27,7 +27,7 @@ class Model:
 
         return self.dataDict
     
-    def sortFields(self, fields=[]):
+    def sortFields(self, fields):
         self.sortedDataDict = dict()
 
         for key, value in self.dataDict.items():
@@ -42,25 +42,33 @@ class Model:
     def createView(self, fields):
         self.sortFields(fields)
 
+        header = 'Block Height|'
+        toWrite = ''
+
         origin = self.filename.split('h', 1)
         origin = origin[-1].split('.', 1)
 
         if not fields == []:
             fileName = f'_eth{origin[0]}'
             for field in fields:
+                header += field + '|'
                 fileName += field.replace(' ', '')
 
             fileName += '.csv'
+            header = header[:-1] + '\n'
             path = f'data/model/{fileName}'
             with open(path, 'w') as file:
 
+                file.write(header)
+
                 for key, value in self.sortedDataDict.items():
-                    toWrite = f'Block Height:{key}\n'
+                    toWrite += f'{key}|'
 
-                    for key0, value0 in value.items():
-                        toWrite += f'{key0}:{value0}\n'
+                    for value0 in value.values():
+                        toWrite += f'{value0}|'
+                    toWrite = toWrite[:-1] + '\n'
 
-                    file.write(toWrite)
+                file.write(toWrite)
 
         else:
             print("Invalid: must have at least one filter to create a view.")

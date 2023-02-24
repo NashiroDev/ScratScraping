@@ -14,20 +14,18 @@ def multipleScrapAndSave(start=0, stop=5, step=1):
         print(f'Error: Failed to scrape and save block n°{i}')
 
 def makeModel(modelPath, fields):
-    try:
-        model = ed.Model(modelPath)
-        model.readFile()
-        model.createView(fields)
-    except:
-        print(f'Error: Failed to create model from FILE with FILTER')
+
+    model = ed.Model(modelPath)
+    model.readFile()
+    model.createView(fields)
 
 ####### Prompt //~6250B/j moy //PoS : 15537393
 
-s=14900000 #début scraping
-e=16678211 #finishing
-p=3125 #Step/Nom du fichier de save eth{}.csv
-multipleScrapAndSave(s, e, p)
+# s=16696875 #début scraping
+# e=16699164 #finishing
+# p=3125 #Step/Nom du fichier de save eth{}.csv
+# multipleScrapAndSave(s, e, p)
 
-# makeModel('data/eth1.csv', ['Difficulty', 'Ether Price', 'Mined by'])
+makeModel('data/eth3125.csv', ['Timestamp', 'Ether Price'])
 
 ##Make : interface, 
