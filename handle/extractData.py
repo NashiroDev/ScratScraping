@@ -39,6 +39,33 @@ class Model:
 
         return fields
     
+    def cleanField(self, type, field):
+        
+        if type == 'Timestamp':
+
+            field = field.split(' ')
+            cleanedField = field[-4].replace('(', '')
+        
+        elif type == 'Ether Price':
+
+            if len(field) < 5:
+                cleanedField = '0'
+            else:
+                field = field.split(' ')
+                field = field[0].replace('$', '')
+                if field[-3] == '.':
+                    field = field.split('.')
+                    cleanedField = field[0]
+                else: cleanedField = field
+
+        elif type == ('Block Reward' or 'Burnt Fees'):
+            
+            field = field.split(' ')
+            cleanedField = field[0]
+
+        return cleanedField
+
+    
     def createView(self, fields):
         self.sortFields(fields)
 
@@ -64,8 +91,8 @@ class Model:
                 for key, value in self.sortedDataDict.items():
                     toWrite += f'{key}|'
 
-                    for value0 in value.values():
-                        toWrite += f'{value0}|'
+                    for key0, value0 in value.items():
+                        toWrite += f'{self.cleanField(key0, value0)}|'
                     toWrite = toWrite[:-1] + '\n'
 
                 file.write(toWrite)
