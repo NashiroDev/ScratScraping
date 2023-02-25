@@ -63,6 +63,11 @@ class Model:
             field = field.split(' ')
             cleanedField = field[0]
 
+        elif type == 'Mined by':
+
+            field = field.split('in')
+            cleanedField = field[0]
+            
         return cleanedField
 
     

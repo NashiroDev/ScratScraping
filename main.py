@@ -26,6 +26,6 @@ def makeModel(modelPath, fields):
 # p=3125 #Step/Nom du fichier de save eth{}.csv
 # multipleScrapAndSave(s, e, p)
 
-makeModel('data/eth3125.csv', ['Timestamp', 'Ether Price'])
+makeModel('data/eth3125.csv', ['Mined by'])
 
 ##Make : interface, 
