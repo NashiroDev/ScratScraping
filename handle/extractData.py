@@ -55,8 +55,8 @@ class Model:
                 field = field[0].replace('$', '')
                 if field[-3] == '.':
                     field = field.split('.')
-                    cleanedField = field[0]
-                else: cleanedField = field
+                    cleanedField = field[0].replace(',', '')
+                else: cleanedField = field.replace(',', '')
 
         elif type == ('Block Reward' or 'Burnt Fees'):
             

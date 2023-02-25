@@ -1,42 +1,71 @@
-
+# encoding: utf-8
+import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 
-class Graph:
+
+def read_data(file_path):
+    """
+    This function reads the data from the specified file path using pandas and returns a pandas dataframe.
+    """
+    return pd.read_csv(file_path, sep='|')
+
+def filter_low_prices(data, ground):
+    ground = np.array([str(x) for x in range(ground+1)])
+
+    # Filter out rows where the Ether price is outside the range 0 to ground
+    count = 0
+    for price in data['Ether Price']:
+
+        if price in ground:
+            data['Block Height'].pop(count)
+            data['Ether Price'].pop(count)
+
+        else: data['Ether Price'][count] = int(price)
+
+        count += 1
     
-    def __init__(self, x_data, y_data, title=None, xlabel=None, ylabel=None):
-        self.x_data = x_data
-        self.y_data = y_data
-        self.title = title
-        self.xlabel = xlabel
-        self.ylabel = ylabel
-        
-    def line_plot(self):
-        plt.plot(self.x_data, self.y_data)
-        plt.title(self.title)
-        plt.xlabel(self.xlabel)
-        plt.ylabel(self.ylabel)
-        plt.show()
-        
-    def scatter_plot(self):
-        plt.scatter(self.x_data, self.y_data)
-        plt.title(self.title)
-        plt.xlabel(self.xlabel)
-        plt.ylabel(self.ylabel)
-        plt.show()
-        
-    def bar_plot(self):
-        plt.bar(self.x_data, self.y_data)
-        plt.title(self.title)
-        plt.xlabel(self.xlabel)
-        plt.ylabel(self.ylabel)
-        plt.show()
+    return data
 
-# Example usage
-x_data = [1, 2, 3, 4, 5]
-y_data = [2, 4, 6, 8, 10]
+def plot_data_BHEP(data, step, ground):
 
-graph = Graph(x_data, y_data, title="My Graph", xlabel="X Values", ylabel="Y Values")
+    data = filter_low_prices(data, ground)
 
-graph.line_plot()
-graph.scatter_plot()
-graph.bar_plot()
+    # Plot the data with the specified step size and no logarithmic scaling
+    plt.figure(figsize=(14, 7))
+    plt.plot(data['Block Height'][::step], data['Ether Price']
+             [::step], linewidth=0.1, marker='.')
+    plt.xlabel('Block Height*10^1')
+    plt.ylabel('Ether Price ($)')
+    plt.title('Ether Price Variation')
+    plt.xticks(np.arange(data['Block Height'][::step].min(), data['Block Height'][::step].max(
+    ), (data['Block Height'][::step].max() - data['Block Height'][::step].min()) / 15))
+    plt.yticks([50, 600, 1360, 2750, data['Ether Price'][::step].max()])
+    plt.grid(True)
+    plt.show()
+
+def plot_data_TEP(data, step, ground):
+
+    data = filter_low_prices(data, ground)
+    lenData = len(data['Timestamp'])
+
+    # Plot the data with the specified step size and no logarithmic scaling
+    plt.figure(figsize=(14, 7))
+    plt.scatter(data['Timestamp'][::step], data['Ether Price'][::step], linewidth=0.1, marker='.', color='g')
+    plt.xlabel('Timestamp')
+    plt.ylabel('Ether Price ($)')
+    plt.title('Ether Price Variation')
+    plt.xticks(np.arange(0, 600, 60), [data['Timestamp'][x] for x in range(0, lenData, int(lenData/9))], rotation=90)
+    plt.yticks([50, 600, 1360, 2750, data['Ether Price'][::step].max()])
+    plt.grid(True)
+    plt.show()
+
+
+if __name__ == "__main__":
+    file_path = './data/model/_eth3125EtherPrice.csv'
+    file_path_bis = './data/model/_eth3125TimestampEtherPrice.csv'
+    data = read_data(file_path)
+    data_bis = read_data(file_path_bis)
+    step, ground = 10, 5
+    plot_data_BHEP(data, step, ground)
+    plot_data_TEP(data_bis, step, ground)
