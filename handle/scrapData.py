@@ -28,39 +28,39 @@ class Block:
     def scrapData(self, stop, step):
         
         count = 1
-        for x in range(self.block_number, stop, step):
-            self.data = []
-            rows = []
-            # Construct the URL for the block page
-            url = f'https://etherscan.io/block/{self.block_number+count}'
+        try:
+            for x in range(self.block_number, stop, step):
+                self.data = []
+                rows = []
+                # Construct the URL for the block page
+                url = f'https://etherscan.io/block/{self.block_number+count}'
 
-            print(x)
+                # Load the page
+                self.driver.get(url)
+                WebDriverWait(self.driver, 10000, 2.2)
 
-            # Load the page
-            self.driver.get(url)
-            WebDriverWait(self.driver, 10000, 2.2)
-
-            # Find all the rows with the class name "row.mb-5"
-            rows.extend(self.driver.find_elements('class name', 'row.mb-4'))
-            rows.extend(self.driver.find_elements('class name', 'row'))
-            rows.extend(self.driver.find_elements('id', 'ContentPlaceHolder1_closingEtherPrice'))
+                # Find all the rows with the class name "row.mb-5"
+                # rows.extend(self.driver.find_elements('class name', 'row.mb-4'))
+                rows.extend(self.driver.find_elements('class name', 'row'))
+                rows.extend(self.driver.find_elements('id', 'ContentPlaceHolder1_closingEtherPrice'))
 
 
-            # Wash data
-            for row in rows:
-                self.data.append(row.text.replace('\n', '').split(':', 1))
+                # Wash data
+                for row in rows:
+                    self.data.append(row.text.replace('\n', '').split(':', 1))
 
-            self.data = [x for x in self.data if len(x)>1]
+                self.data = [x for x in self.data if len(x)>1]
 
-            self.writeToCsv(step)
+                self.writeToCsv(step)
 
-            time.sleep(1.218)
+                time.sleep(0.28)
 
-            percentage = round(float(self.block_number/stop-self.block_number), 2)
-            print(f'Block n°{x} sur {stop}\n{percentage} % done.')
-            count += 1
+                print(f'Block n°{x} sur {stop}')
+                count += 1
 
-            # Close the browser window
+                # Close the browser window
+        except:
+            print('Error while proccessing a block')
         
 
     def displayData(self):

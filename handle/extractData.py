@@ -11,12 +11,16 @@ class Model:
             data = file.read()
             fieldLine = data.split('\n')
             blockTemp= ['', {}]
+            lineCompare = [[], []]
 
             for line in fieldLine:
                 line = line.split(':', 1)
-
+                
+                
                 if (line[0] == 'Block Height'):
-                    if len(blockTemp[1]) < 1:
+                    if line[1] == lineCompare[1]:
+                        pass
+                    elif len(blockTemp[1]) < 1:
                         blockTemp[0] = line[1]
                     else:
                         self.dataDict[blockTemp[0]] = blockTemp[1]
@@ -24,6 +28,8 @@ class Model:
 
                 elif not line[0] == '':
                     blockTemp[1][line[0]] = line[1]
+                
+                lineCompare = line
 
         return self.dataDict
     
@@ -67,6 +73,18 @@ class Model:
 
             field = field.split('in')
             cleanedField = field[0]
+        elif type == 'Fee Recipient':
+            if ' in 12 secs' in field:
+                field = field.split(' in 12 sec')
+                cleanedField = field[0]
+
+                if 'Fee Recipient' in cleanedField:
+                    field = cleanedField.split('pient: ')
+                    cleanedField = field[1]
+
+            else: cleanedField = field
+        else:
+            cleanedField = field
             
         return cleanedField
 
