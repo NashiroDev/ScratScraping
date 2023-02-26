@@ -3,15 +3,10 @@ import handle.scrapData as sd
 import handle.extractData as ed
 
 def multipleScrapAndSave(start=0, stop=5, step=1):
-    try:
-        for i in range(start, stop, step):
-            block = sd.Block(i)
-            block.scrapData()
-            block.writeToCsv(step)
-            percentage = float((i/stop)*100)
-            print(f'Tasks : {i}/{stop}\n{percentage}% done.')
-    except:
-        print(f'Error: Failed to scrape and save block n°{i}')
+
+    block = sd.Block(start)
+    block.scrapData(stop, step)
+    block.driver.quit()
 
 def makeModel(modelPath, fields):
 
@@ -21,11 +16,11 @@ def makeModel(modelPath, fields):
 
 ####### Prompt //~6250B/j moy //PoS : 15537393
 
-# s=16696875 #début scraping
-# e=16699164 #finishing
-# p=3125 #Step/Nom du fichier de save eth{}.csv
-# multipleScrapAndSave(s, e, p)
+s=14000000 #début scraping
+e=16699164 #finishing
+# p=1 #Step/Nom du fichier de save eth{}.csv
+multipleScrapAndSave(s, e, 1)
 
-makeModel('data/eth3125.csv', ['Mined by'])
+# makeModel('data/eth3125.csv', ['Mined by'])
 
 ##Make : interface, 
