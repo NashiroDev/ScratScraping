@@ -3,16 +3,15 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-
+'''read the data from the specified file path using pandas and returns a pandas dataframe.'''
 def read_data(file_path):
-    """
-    This function reads the data from the specified file path using pandas and returns a pandas dataframe.
-    """
+
     return pd.read_csv(file_path, sep='|')
 
-
+'''exclude blocks where eth price < ground'''
 def filter_low_prices(data, ground):
 
+    # Transform ground to an array of this type : ['0', '1', '2', ..., 'ground-1', 'ground']
     ground = np.array([str(x) for x in range(ground+1)])
 
     # Filter out rows where the Ether price is outside the range 0 to ground
@@ -20,17 +19,20 @@ def filter_low_prices(data, ground):
     for price in data['Ether Price']:
 
         if price in ground:
+            # Pop unwanted lines
             data['Block Height'].pop(count)
             data['Ether Price'].pop(count)
+            data['Timestamp'].pop(count)
 
         else:
+            # Transform from str() type to int()
             data['Ether Price'][count] = int(price)
 
         count += 1
 
     return data
 
-
+'''create a two dimensions graphic with x=price and y=block height'''
 def plot_data_BHEP(data, step, ground):
 
     data = filter_low_prices(data, ground)
@@ -39,7 +41,7 @@ def plot_data_BHEP(data, step, ground):
     plt.figure(figsize=(14, 7))
     plt.plot(data['Block Height'][::step], data['Ether Price']
              [::step], linewidth=0.1, marker='.')
-    plt.xlabel('Block Height*10^1')
+    plt.xlabel('Block Height*10^1 (millions)')
     plt.ylabel('Ether Price ($)')
     plt.title('Ether Price Variation')
     plt.xticks(np.arange(data['Block Height'][::step].min(), data['Block Height'][::step].max(
@@ -48,7 +50,7 @@ def plot_data_BHEP(data, step, ground):
     plt.grid(True)
     plt.show()
 
-
+'''create a two dimensions graphic with x=price and y=timestamp'''
 def plot_data_TEP(data, step, ground):
 
     data = filter_low_prices(data, ground)
@@ -67,7 +69,7 @@ def plot_data_TEP(data, step, ground):
     plt.grid(True)
     plt.show()
 
-
+'''create a camembert view of the principals miners'''
 def plot_data_BHMB(data, limited):
 
     data2 = [[], []]
@@ -107,11 +109,11 @@ def plot_data_BHMB(data, limited):
             autopct='%1.1f%%',
             rotatelabels=185
             )
-    plt.title('Addresses weight in a sample of Blocks.')
+    plt.title('Miners weight in a sample of Blocks.')
 
     plt.show()
 
-
+'''create a camembert view of the principals validators since eth2.0'''
 def plot_data_BHFR(data, limited):
     data2 = [[], []]
     lenData = len(data['Fee Recipient'])
@@ -144,7 +146,7 @@ def plot_data_BHFR(data, limited):
 
     plt.pie(finalData[1],
             labels=finalData[0],
-            startangle=230,
+            startangle=45,
             shadow=True,
             explode=np.zeros(len(finalData[0])),
             autopct='%1.1f%%',
@@ -164,7 +166,7 @@ if __name__ == "__main__":
     # data_bis = read_data(file_path_bis)
     data_ter = read_data(file_path_ter)
 
-    step, step2, ground, limite = 10, 5, 5, 2
+    step, step2, ground, limite = 10, 5, 5, 1
     # plot_data_BHEP(data, step, ground)
     # plot_data_TEP(data_bis, step2, ground)
     plot_data_BHFR(data_ter, limite)

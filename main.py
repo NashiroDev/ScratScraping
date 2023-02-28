@@ -57,10 +57,10 @@ def useModel(file_path):
 
 ####### Prompt //~6250B/j moy //PoS : 15537393
 
-s=15542494 #début scraping
+s=15550609 #début scraping
 e=16711850 #finishing
-# p=1 #Step/Nom du fichier de save eth{}.csv
-multipleScrapAndSave(s, e, 1)
+p=1 #Step/Nom du fichier de save eth{}.csv
+multipleScrapAndSave(s, e, p)
 
 # makeModel('data/eth1.csv', ['Fee Recipient'])
 

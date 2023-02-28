@@ -22,51 +22,59 @@ class Block:
         # Pass the Service object to the Chrome constructor
         self.driver = webdriver.Chrome(service=s)
 
+        # Init object variables
         self.block_number = block_number
         self.data = []
 
+    '''get the data from the ChromeDriver'''
     def scrapData(self, stop, step):
-        
         count = 1
+
         try:
-            for x in range(self.block_number, stop, step):
+            for i in range(self.block_number, stop, step):
                 self.data = []
                 rows = []
+
                 # Construct the URL for the block page
                 url = f'https://etherscan.io/block/{self.block_number+count}'
 
                 # Load the page
                 self.driver.get(url)
-                WebDriverWait(self.driver, 10000, 2.2)
 
-                # Find all the rows with the class name "row.mb-5"
-                # rows.extend(self.driver.find_elements('class name', 'row.mb-4'))
+                # Wait
+                WebDriverWait(self.driver, 10, 2.2)
+
+                # Get the content with the class specified
                 rows.extend(self.driver.find_elements('class name', 'row'))
-                rows.extend(self.driver.find_elements('id', 'ContentPlaceHolder1_closingEtherPrice'))
-
+                rows.remove(rows[-1])
 
                 # Wash data
                 for row in rows:
                     self.data.append(row.text.replace('\n', '').split(':', 1))
 
+                # Reconstruct the data while excluding blank fields
                 self.data = [x for x in self.data if len(x)>1]
 
+                # Call writeToCsv method to save current block data
                 self.writeToCsv(step)
 
-                time.sleep(0.28)
+                # Wait 0.31s to avoid ban while browsing blocks
+                time.sleep(0.31)
 
-                print(f'Block n°{x} sur {stop}')
+                # Notify the script state
+                if count % 25 == 0:
+                    print(f'Block n°{count} sur {round((stop-self.block_number)/step)}\nCurrent block : {i}')
+
                 count += 1
-
-                # Close the browser window
         except:
             print('Error while proccessing a block')
-        
 
+    '''show the current block data'''
     def displayData(self):
         for item in self.data:
             print(item)
 
+    '''save the current block in data/eth{step}.csv'''
     def writeToCsv(self, step):
         # Set the filename for the CSV file
         filename = f'data/eth{step}.csv'
@@ -79,8 +87,12 @@ class Block:
             # If the file doesn't exist, write the header row
             if file_exists:
                 for x in self.data:
-                    if not x[0] == ('Extra Data' or 'More Details'):
+                    # Some filters
+                    if x[0] != ('Extra Data' or 'More Details'):
                         if x[0] == 'Burnt Fees' and not x[1][0] in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
                             x[1] = x[1][2:]
                         header = x[0] + ':' + x[1]
-                        file.write(header + '\n')
+                        try:
+                            file.write(header + '\n')
+                        except:
+                            pass
