@@ -2,6 +2,34 @@
 import handle.scrapData as sd
 import handle.extractData as ed
 import handle.useData as ud
+from os import listdir
+
+def askInt(toAsk, incorrectMessage="Error: Invalid entry", possibleAnswear=False):
+    while True:
+        try:
+            userInput = int(input(toAsk))
+        except:
+            print("Error, please retry.")
+        else:
+            if not possibleAnswear:
+                return userInput
+            elif userInput in possibleAnswear:
+                return userInput
+        print(incorrectMessage)
+        
+def askStr(toAsk, incorrectMessage="Error: Invalid entry", possibleAnswear=False):
+    while True:
+        try:
+            userInput = str(input(toAsk))
+        except:
+            print("Error, please retry.")
+        else:
+            if not possibleAnswear:
+                return userInput
+            elif userInput in possibleAnswear:
+                return userInput
+        print(incorrectMessage)
+                
 
 def multipleScrapAndSave(start=0, stop=5, step=1):
 
@@ -9,64 +37,102 @@ def multipleScrapAndSave(start=0, stop=5, step=1):
     block.scrapData(stop, step)
     block.driver.quit()
 
-def makeModel(modelPath, fields):
+def makeModel(fields, dataPath='data/eth1.csv'):
 
-    model = ed.Model(modelPath)
+    model = ed.Model(dataPath)
     model.readFile()
     model.createView(fields)
 
-def useModel(file_path):
+def deleteModel():
+
+    model = ed.Model('data/eth1.csv')
+    model.deleteView()
+
+def useModel(dataPath, userChoice):
     
-     # Display instructions to the user
-    instructions = "Please select a function (1-3 : \nud.plot_data_BHEP : 1\nud.plot_data_TEP : 2\nud.plot_data_BHMD : 3): "
-    selection = str(input(instructions))
+    data = ud.read_data(dataPath)
 
-    # Use a while loop to keep prompting the user until they provide a valid input
-    while selection not in ["1", "2", "3"]:
-        print("Invalid input. Please try again.")
-        selection = input(instructions)
+    if userChoice in ["1","2"]:
+        step = askInt("Please select the step between each data (enter 1 to keep all of them) : \n>>>")
+        ground = askInt("Please select the lowest price displayed (enter 0 to keep all the data) : \n>>>")
+    elif userChoice in ["4","5"]:
+        limited = askInt("Please select the number of entity displayed (enter 1 to see the largest and the rest) : \n>>>")
 
-    # Use a try-except block to catch any potential errors
-    try:
-        # Call the corresponding function based on user input
-        if selection == "1":
-            ud.plot_data_BHEP()
-        elif selection == "2":
-            ud.plot_data_TEP()
-        else:
-            ud.plot_data_BHMB()
-    except:
-        print("An error occurred while executing the selected function")
+    if userChoice == "1":
+        ud.plot_data_BHEP(data, step, ground)
+    elif userChoice == "2":
+        ud.plot_data_TEP(data, step, ground)
+    elif userChoice == "3":
+        ud.plot_data_BHMB(data, limited)
+    elif userChoice == "4":
+        ud.plot_data_BHFR(data, limited)
+
+
+if __name__ == "__main__":
+    loop = True
     
-    
-    
-    
-    # step, step2, ground, limite = 10, 5, 5, 5
+    while loop:
 
-    # file_path = './data/model/_eth3125EtherPrice.csv'
-    # file_path_bis = './data/model/_eth3125TimestampEtherPrice.csv'
-    # file_path_ter = './data/model/_eth3125Minedby.csv'
+        userInput = askStr("Please enter the id of the action or !q :\nLaunch scrap -> 1\nHandle models -> 2\nUse models -> 3\nQuit -> !q\n>>>", "Error: Please enter !q or a number in the correct range.", ['1','2','3','!q'])
+        
+        if userInput == '!q':
+            loop = False
 
-    # data = ud.read_data(file_path)
-    # data_bis = ud.read_data(file_path_bis)
-    # data_ter = ud.read_data(file_path_ter)
+        elif userInput == '1':
+            startBlock = askInt("Please enter the number of the first block to scrap :\n>>>", "Error: entry must be an integer")
+            endBlock = askInt("Please enter the number of the last block to scrap :\n>>>", "Error: entry must be an integer")
+            stepBlock = askInt("What is the step between each scrapped block ?\n>>>", "Error: entry must be an integer")
+            multipleScrapAndSave(startBlock, endBlock, stepBlock)
 
-    # ud.plot_data_BHEP(data, step, ground)
-    # ud.plot_data_TEP(data_bis, step2, ground)
-    # ud.plot_data_BHMB(data_ter, limite)
+        elif userInput == '2':
+            userInput = askStr("What do you want to do ? :\nCreate a model -> 1\nDelete a model -> 2\nGo home -> !h\n>>>", "Error: Please enter !h or a number in the correct range.", ['1','2','!h'])
+            
+            if userInput == '!h':
+                pass
+            
+            elif userInput == '1':
+                files = listdir('data')
+                del files[-1]
+                potentialFields = ['Timestamp', 'Proposed On', 'Transactions', 'Fee Recipient', 'Mined by', 'Block Reward', 
+                                   'Total Difficulty', 'Size', 'Gas Used', 'Gas Limit', 'Base Fee Per Gas', 'Burnt Fees', 'Ether Price']
+                explainFields = f"Select the fields that you want to use in your new Model among these (Block Height is used by default):\n{potentialFields}\nChoose at least one and at most three fields. Refer them by their id in the given list (start at 0), separated with a ';' in between.\nExemple : 0;2 or 6;-2;4\nNote that Fee Recipient and Mined by don't appear in every block."
+                
+                dataPath = askStr("Type the data file name to use (in /data) ?\n{}\n>>>".format(files), "Error: File does not exist in /data.", files)
 
-####### Prompt //~6250B/j moy //PoS : 15537393
+                indicator = True
+                while indicator:
+                    indicator = False
 
-s=15550609 #début scraping
-e=16711850 #finishing
-p=1 #Step/Nom du fichier de save eth{}.csv
-multipleScrapAndSave(s, e, p)
+                    toSortFields = askStr(explainFields)
+                    toSortFields = toSortFields.split(';')
+                    finalSortFields = []
 
-# makeModel('data/eth1.csv', ['Fee Recipient'])
+                    if len(toSortFields) <= 3:
+                        for id in toSortFields:
+                            try:
+                                potentialFields[id]
+                            except:
+                                indicator = True
+                                print("The prompt given wasn't correct.")
+                            else:
+                                finalSortFields.append(potentialFields[id])
+                
+                makeModel(finalSortFields, dataPath)
 
-# useModel('/data/model/_eth3125EtherPrice.csv', )
+            elif userInput == '2':
+                deleteModel()
 
+        elif userInput == '3':
+            files = listdir('data/model')
+            instructions = "Please select a function to run :\nud.plot_data_BHEP -> 1\nud.plot_data_TEP -> 2\nud.plot_data_BHMD -> 3\nud.plot_data_BHFR -> 4\n>>>"
 
+            userInput = askInt(instructions, "Error: index out of range.", [int(i) for i in range(1, 4)])
+            dataPath = askStr("Type the model file name to use (in /data/model) ?\n{}\n>>>".format(files), "Error: File does not exist in /data/model.", files)
 
+            useModel(dataPath, userInput)
 
-##Make : interface, 
+# ####### Prompt //~6250B/j moy //PoS : 15537393
+# s=15565437 #début scraping
+# e=16711850 #finishing
+# p=1 #Step/Nom du fichier de save eth{}.csv
+# multipleScrapAndSave(s, e, p)
