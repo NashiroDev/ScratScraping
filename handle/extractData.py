@@ -1,5 +1,7 @@
+# -*- coding: utf-8 -*-
 from os import listdir
 from os import remove
+
 class Model:
     def __init__(self, filename):
         self.filename = filename
@@ -77,6 +79,17 @@ class Model:
 
             field = field.split('in')
             cleanedField = field[0]
+
+        elif type == 'Transactions':
+
+            field = field.split(' ')
+            cleanedField = field[0]
+
+        elif type == 'Gas Used':
+            
+            field = field.split('(')
+            cleanedField = field[0]
+
         elif type == 'Fee Recipient':
             if ' in 12 secs' in field:
                 field = field.split(' in 12 sec')
@@ -111,7 +124,9 @@ class Model:
             fileName += '.csv'
             header = header[:-1] + '\n'
             path = f'data/model/{fileName}'
-            with open(path, 'w') as file:
+            
+            print("Prossessing, please wait...")
+            with open(path, 'w', encoding="utf-8") as file:
 
                 file.write(header)
 
@@ -160,7 +175,7 @@ class Model:
             while loop:
                 try:
                     userConfirm = str(input(f"Are you sure you want to delete {files[int(userInput)-1]} ? [Y/N] : "))
-                    if (userConfirm.lower() == 'y' or userConfirm.lower()) == 'n':
+                    if (userConfirm.lower() == 'y' or userConfirm.lower() == 'n'):
                         loop = 0
                         if userConfirm.lower() == 'y':
                             userConfirm = True
@@ -172,6 +187,6 @@ class Model:
                     print("Error: Please enter a string.")
 
             if userConfirm:
-                pathToDelete = f'/data/model/{files[int(userInput)-1]}'
+                pathToDelete = f'data/model/{files[int(userInput)-1]}'
                 remove(pathToDelete)
                 print("File deleted successfully.")

@@ -1,12 +1,33 @@
-# encoding: utf-8
+# -*- coding: utf-8 -*-
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 '''read the data from the specified file path using pandas and returns a pandas dataframe.'''
 def read_data(file_path):
+    data = dict()
+    
+    with open(file_path, "r") as file:
+        lines = file.read()
+        lines = lines.split('\n')
+        
+        header = lines[0].split('|')
+        lines.pop(0)
+        
+        for head in header:
+            data[head] = []
 
-    return pd.read_csv(file_path, sep='|')
+        for line in lines:
+            if not line == '':
+                line = line.split('|')
+
+                for i in range(len(header)):
+                    try:
+                        data[header[i]].append(line[i])
+                    except:
+                        pass
+    return data
 
 '''exclude blocks where eth price < ground'''
 def filter_low_prices(data, ground):
@@ -21,9 +42,12 @@ def filter_low_prices(data, ground):
         if price in ground:
             # Pop unwanted lines
             data['Block Height'].pop(count)
-            data['Ether Price'].pop(count)
-            data['Timestamp'].pop(count)
-
+            try:
+                data['Ether Price'].pop(count)
+            except: pass
+            try:
+                data['Timestamp'].pop(count)
+            except: pass
         else:
             # Transform from str() type to int()
             data['Ether Price'][count] = int(price)
@@ -31,43 +55,6 @@ def filter_low_prices(data, ground):
         count += 1
 
     return data
-
-'''create a two dimensions graphic with x=price and y=block height'''
-def plot_data_BHEP(data, step, ground):
-
-    data = filter_low_prices(data, ground)
-
-    # Plot the data with the specified step size and no logarithmic scaling
-    plt.figure(figsize=(14, 7))
-    plt.plot(data['Block Height'][::step], data['Ether Price']
-             [::step], linewidth=0.1, marker='.')
-    plt.xlabel('Block Height*10^1 (millions)')
-    plt.ylabel('Ether Price ($)')
-    plt.title('Ether Price Variation')
-    plt.xticks(np.arange(data['Block Height'][::step].min(), data['Block Height'][::step].max(
-    ), (data['Block Height'][::step].max() - data['Block Height'][::step].min()) / 15))
-    plt.yticks([50, 600, 1360, 2750, data['Ether Price'][::step].max()])
-    plt.grid(True)
-    plt.show()
-
-'''create a two dimensions graphic with x=price and y=timestamp'''
-def plot_data_TEP(data, step, ground):
-
-    data = filter_low_prices(data, ground)
-    lenData = len(data['Timestamp'])
-
-    # Plot the data with the specified step size and no logarithmic scaling
-    plt.figure(figsize=(14, 7))
-    plt.scatter(data['Timestamp'][::step], data['Ether Price']
-                [::step], linewidth=0.1, marker='.', color='g')
-    plt.xlabel('Timestamp')
-    plt.ylabel('Ether Price ($)')
-    plt.title('Ether Price Variation')
-    plt.xticks(np.arange(0, 800, 80), [data['Timestamp'][x] for x in range(
-        0, lenData, int(lenData/9))], rotation=90)
-    plt.yticks([50, 600, 1360, 2750, data['Ether Price'][::step].max()])
-    plt.grid(True)
-    plt.show()
 
 '''create a camembert view of the principals miners'''
 def plot_data_BHMB(data, limited):
@@ -156,17 +143,3 @@ def plot_data_BHFR(data, limited):
 
     plt.show()
 
-
-if __name__ == "__main__":
-    file_path = './data/model/_eth3125EtherPrice.csv'
-    file_path_bis = './data/model/_eth3125TimestampEtherPrice.csv'
-    file_path_ter = './data/model/_eth1FeeRecipient.csv'
-
-    # data = read_data(file_path)
-    # data_bis = read_data(file_path_bis)
-    data_ter = read_data(file_path_ter)
-
-    step, step2, ground, limite = 10, 5, 5, 1
-    # plot_data_BHEP(data, step, ground)
-    # plot_data_TEP(data_bis, step2, ground)
-    plot_data_BHFR(data_ter, limite)

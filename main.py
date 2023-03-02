@@ -1,4 +1,4 @@
-#charset: utf-8
+# -*- coding: utf-8 -*-
 import handle.scrapData as sd
 import handle.extractData as ed
 import handle.useData as ud
@@ -52,19 +52,12 @@ def useModel(dataPath, userChoice):
     
     data = ud.read_data(dataPath)
 
-    if userChoice in ["1","2"]:
-        step = askInt("Please select the step between each data (enter 1 to keep all of them) : \n>>>")
-        ground = askInt("Please select the lowest price displayed (enter 0 to keep all the data) : \n>>>")
-    elif userChoice in ["4","5"]:
+    if userChoice in [1,2]:
         limited = askInt("Please select the number of entity displayed (enter 1 to see the largest and the rest) : \n>>>")
 
-    if userChoice == "1":
-        ud.plot_data_BHEP(data, step, ground)
-    elif userChoice == "2":
-        ud.plot_data_TEP(data, step, ground)
-    elif userChoice == "3":
+    if userChoice == 1:
         ud.plot_data_BHMB(data, limited)
-    elif userChoice == "4":
+    elif userChoice == 2:
         ud.plot_data_BHFR(data, limited)
 
 
@@ -95,9 +88,10 @@ if __name__ == "__main__":
                 del files[-1]
                 potentialFields = ['Timestamp', 'Proposed On', 'Transactions', 'Fee Recipient', 'Mined by', 'Block Reward', 
                                    'Total Difficulty', 'Size', 'Gas Used', 'Gas Limit', 'Base Fee Per Gas', 'Burnt Fees', 'Ether Price']
-                explainFields = f"Select the fields that you want to use in your new Model among these (Block Height is used by default):\n{potentialFields}\nChoose at least one and at most three fields. Refer them by their id in the given list (start at 0), separated with a ';' in between.\nExemple : 0;2 or 6;-2;4\nNote that Fee Recipient and Mined by don't appear in every block."
+                explainFields = f"Select the fields that you want to use in your new Model among these (Block Height is used by default):\n{potentialFields}\nChoose at least one and at most three fields. Refer them by their id in the given list (start at 0), separated with a ';' in between.\nExemple : 0;2 or 6;-2;4\nNote that Fee Recipient and Mined by don't appear in every block.\n>>>"
                 
                 dataPath = askStr("Type the data file name to use (in /data) ?\n{}\n>>>".format(files), "Error: File does not exist in /data.", files)
+                finalDataPath = f"data/{dataPath}"
 
                 indicator = True
                 while indicator:
@@ -110,26 +104,27 @@ if __name__ == "__main__":
                     if len(toSortFields) <= 3:
                         for id in toSortFields:
                             try:
-                                potentialFields[id]
+                                potentialFields[int(id)]
                             except:
                                 indicator = True
                                 print("The prompt given wasn't correct.")
                             else:
-                                finalSortFields.append(potentialFields[id])
+                                finalSortFields.append(potentialFields[int(id)])
                 
-                makeModel(finalSortFields, dataPath)
+                makeModel(finalSortFields, finalDataPath)
 
             elif userInput == '2':
                 deleteModel()
 
         elif userInput == '3':
             files = listdir('data/model')
-            instructions = "Please select a function to run :\nud.plot_data_BHEP -> 1\nud.plot_data_TEP -> 2\nud.plot_data_BHMD -> 3\nud.plot_data_BHFR -> 4\n>>>"
+            instructions = "Please select a function to run :\nud.plot_data_BHMD -> 1\nud.plot_data_BHFR -> 2\n>>>"
 
-            userInput = askInt(instructions, "Error: index out of range.", [int(i) for i in range(1, 4)])
+            userInput = askInt(instructions, "Error: index out of range.", [int(i) for i in range(1, 3)])
             dataPath = askStr("Type the model file name to use (in /data/model) ?\n{}\n>>>".format(files), "Error: File does not exist in /data/model.", files)
+            definitivePath = f"data/model/{dataPath}"
 
-            useModel(dataPath, userInput)
+            useModel(definitivePath, userInput)
 
 # ####### Prompt //~6250B/j moy //PoS : 15537393
 # s=15565437 #début scraping
