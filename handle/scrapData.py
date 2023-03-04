@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.wait import WebDriverWait
@@ -34,9 +35,13 @@ class Block:
             for i in range(self.block_number, stop, step):
                 self.data = []
                 rows = []
+                urlPart = self.block_number + (count*step)
 
                 # Construct the URL for the block page
-                url = f'https://etherscan.io/block/{self.block_number+count}'
+                url = f'https://etherscan.io/block/{urlPart}'
+                
+                # Wait 0.31s to avoid ban while browsing blocks
+                time.sleep(0.31)
 
                 # Load the page
                 self.driver.get(url)
@@ -57,9 +62,6 @@ class Block:
 
                 # Call writeToCsv method to save current block data
                 self.writeToCsv(step)
-
-                # Wait 0.31s to avoid ban while browsing blocks
-                time.sleep(0.31)
 
                 # Notify the script state
                 if count % 25 == 0:

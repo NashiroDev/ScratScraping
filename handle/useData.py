@@ -1,12 +1,33 @@
-# encoding: utf-8
+# -*- coding: utf-8 -*-
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 '''read the data from the specified file path using pandas and returns a pandas dataframe.'''
 def read_data(file_path):
+    data = dict()
+    
+    with open(file_path, "r") as file:
+        lines = file.read()
+        lines = lines.split('\n')
+        
+        header = lines[0].split('|')
+        lines.pop(0)
+        
+        for head in header:
+            data[head] = []
 
-    return pd.read_csv(file_path, sep='|')
+        for line in lines:
+            if not line == '':
+                line = line.split('|')
+
+                for i in range(len(header)):
+                    try:
+                        data[header[i]].append(line[i])
+                    except:
+                        pass
+    return data
 
 '''exclude blocks where eth price < ground'''
 def filter_low_prices(data, ground):
@@ -21,9 +42,12 @@ def filter_low_prices(data, ground):
         if price in ground:
             # Pop unwanted lines
             data['Block Height'].pop(count)
-            data['Ether Price'].pop(count)
-            data['Timestamp'].pop(count)
-
+            try:
+                data['Ether Price'].pop(count)
+            except: pass
+            try:
+                data['Timestamp'].pop(count)
+            except: pass
         else:
             # Transform from str() type to int()
             data['Ether Price'][count] = int(price)
@@ -32,141 +56,95 @@ def filter_low_prices(data, ground):
 
     return data
 
-'''create a two dimensions graphic with x=price and y=block height'''
-def plot_data_BHEP(data, step, ground):
-
-    data = filter_low_prices(data, ground)
-
-    # Plot the data with the specified step size and no logarithmic scaling
-    plt.figure(figsize=(14, 7))
-    plt.plot(data['Block Height'][::step], data['Ether Price']
-             [::step], linewidth=0.1, marker='.')
-    plt.xlabel('Block Height*10^1 (millions)')
-    plt.ylabel('Ether Price ($)')
-    plt.title('Ether Price Variation')
-    plt.xticks(np.arange(data['Block Height'][::step].min(), data['Block Height'][::step].max(
-    ), (data['Block Height'][::step].max() - data['Block Height'][::step].min()) / 15))
-    plt.yticks([50, 600, 1360, 2750, data['Ether Price'][::step].max()])
-    plt.grid(True)
-    plt.show()
-
-'''create a two dimensions graphic with x=price and y=timestamp'''
-def plot_data_TEP(data, step, ground):
-
-    data = filter_low_prices(data, ground)
-    lenData = len(data['Timestamp'])
-
-    # Plot the data with the specified step size and no logarithmic scaling
-    plt.figure(figsize=(14, 7))
-    plt.scatter(data['Timestamp'][::step], data['Ether Price']
-                [::step], linewidth=0.1, marker='.', color='g')
-    plt.xlabel('Timestamp')
-    plt.ylabel('Ether Price ($)')
-    plt.title('Ether Price Variation')
-    plt.xticks(np.arange(0, 800, 80), [data['Timestamp'][x] for x in range(
-        0, lenData, int(lenData/9))], rotation=90)
-    plt.yticks([50, 600, 1360, 2750, data['Ether Price'][::step].max()])
-    plt.grid(True)
-    plt.show()
-
 '''create a camembert view of the principals miners'''
 def plot_data_BHMB(data, limited):
 
     data2 = [[], []]
-    lenData = len(data['Mined by'])
+    try:
+        lenData = len(data['Mined by'])
 
-    for i in range(0, lenData):
-        if pd.isna(data['Mined by'][i]):
-            pass
-        elif data['Mined by'][i] not in data2[0]:
-            data2[0].append(data['Mined by'][i])
-            data2[1].append(1)
-        else:
-            index = data2[0].index(data['Mined by'][i])
-            data2[1][index] += 1
+        for i in range(0, lenData):
+            if pd.isna(data['Mined by'][i]):
+                pass
+            elif data['Mined by'][i] not in data2[0]:
+                data2[0].append(data['Mined by'][i])
+                data2[1].append(1)
+            else:
+                index = data2[0].index(data['Mined by'][i])
+                data2[1][index] += 1
 
-    finalData = [[], []]
-    currentMax = data2[1].index(max(data2[1]))
-    for i in range(limited):
-        finalData[0].append(data2[0][currentMax])
-        finalData[1].append(int(data2[1][currentMax]))
-        data2[0].remove(data2[0][currentMax])
-        data2[1].remove(data2[1][currentMax])
-        currentMax = data2[0].index(max(data2[0]))
+        finalData = [[], []]
+        currentMax = data2[1].index(max(data2[1]))
+        for i in range(limited):
+            finalData[0].append(data2[0][currentMax])
+            finalData[1].append(int(data2[1][currentMax]))
+            data2[0].remove(data2[0][currentMax])
+            data2[1].remove(data2[1][currentMax])
+            currentMax = data2[0].index(max(data2[0]))
 
-    others = ['others', len(data2[0])-limited]
+        others = ['others', len(data2[0])-limited]
 
-    finalData[1].append(others[1])
-    finalData[0].append(others[0])
+        finalData[1].append(others[1])
+        finalData[0].append(others[0])
 
-    plt.figure(figsize=(14, 7))
+        plt.figure(figsize=(14, 7))
 
-    plt.pie(finalData[1],
-            labels=finalData[0],
-            startangle=230,
-            shadow=True,
-            explode=np.zeros(len(finalData[0])),
-            autopct='%1.1f%%',
-            rotatelabels=185
-            )
-    plt.title('Miners weight in a sample of Blocks.')
+        plt.pie(finalData[1],
+                labels=finalData[0],
+                startangle=230,
+                shadow=True,
+                explode=np.zeros(len(finalData[0])),
+                autopct='%1.1f%%',
+                rotatelabels=185
+                )
+        plt.title('Miners weight in a sample of Blocks.')
 
-    plt.show()
+        plt.show()
+    except KeyError:
+        print('Error, model seems to have a required row name missing.')
 
 '''create a camembert view of the principals validators since eth2.0'''
 def plot_data_BHFR(data, limited):
     data2 = [[], []]
-    lenData = len(data['Fee Recipient'])
+    try:
+        lenData = len(data['Fee Recipient'])
 
-    for i in range(0, lenData):
-        if pd.isna(data['Fee Recipient'][i]):
-            pass
-        elif data['Fee Recipient'][i] not in data2[0]:
-            data2[0].append(data['Fee Recipient'][i])
-            data2[1].append(1)
-        else:
-            index = data2[0].index(data['Fee Recipient'][i])
-            data2[1][index] += 1
+        for i in range(0, lenData):
+            if pd.isna(data['Fee Recipient'][i]):
+                pass
+            elif data['Fee Recipient'][i] not in data2[0]:
+                data2[0].append(data['Fee Recipient'][i])
+                data2[1].append(1)
+            else:
+                index = data2[0].index(data['Fee Recipient'][i])
+                data2[1][index] += 1
 
-    finalData = [[], []]
-    currentMax = data2[1].index(max(data2[1]))
-    for i in range(limited):
-        finalData[0].append(data2[0][currentMax])
-        finalData[1].append(int(data2[1][currentMax]))
-        data2[0].remove(data2[0][currentMax])
-        data2[1].remove(data2[1][currentMax])
-        currentMax = data2[0].index(max(data2[0]))
+        finalData = [[], []]
+        currentMax = data2[1].index(max(data2[1]))
+        for i in range(limited):
+            finalData[0].append(data2[0][currentMax])
+            finalData[1].append(int(data2[1][currentMax]))
+            data2[0].remove(data2[0][currentMax])
+            data2[1].remove(data2[1][currentMax])
+            currentMax = data2[0].index(max(data2[0]))
 
-    others = ['others', len(data2[0])-limited]
+        others = ['others', len(data2[0])-limited]
 
-    finalData[1].append(others[1])
-    finalData[0].append(others[0])
+        finalData[1].append(others[1])
+        finalData[0].append(others[0])
 
-    plt.figure(figsize=(14, 7))
+        plt.figure(figsize=(14, 7))
 
-    plt.pie(finalData[1],
-            labels=finalData[0],
-            startangle=45,
-            shadow=True,
-            explode=np.zeros(len(finalData[0])),
-            autopct='%1.1f%%',
-            rotatelabels=185
-            )
-    plt.title('Share of blocks validated since The Merge.')
+        plt.pie(finalData[1],
+                labels=finalData[0],
+                startangle=45,
+                shadow=True,
+                explode=np.zeros(len(finalData[0])),
+                autopct='%1.1f%%',
+                rotatelabels=185
+                )
+        plt.title('Share of blocks validated since The Merge.')
 
-    plt.show()
-
-
-if __name__ == "__main__":
-    file_path = './data/model/_eth3125EtherPrice.csv'
-    file_path_bis = './data/model/_eth3125TimestampEtherPrice.csv'
-    file_path_ter = './data/model/_eth1FeeRecipient.csv'
-
-    # data = read_data(file_path)
-    # data_bis = read_data(file_path_bis)
-    data_ter = read_data(file_path_ter)
-
-    step, step2, ground, limite = 10, 5, 5, 1
-    # plot_data_BHEP(data, step, ground)
-    # plot_data_TEP(data_bis, step2, ground)
-    plot_data_BHFR(data_ter, limite)
+        plt.show()
+    except KeyError:
+        print('Error, model seems to have a required row name missing.')
