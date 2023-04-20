@@ -100,8 +100,8 @@ def plot_data_BHMB(data, limited):
         plt.title('Miners weight in a sample of Blocks.')
 
         plt.show()
-    except KeyError:
-        print('Error, model seems to have a required row name missing.')
+    except:
+        print('Error, model might have a required row name missing or the parameters given are incorrects.')
 
 '''create a camembert view of the principals validators since eth2.0'''
 def plot_data_BHFR(data, limited):
@@ -146,5 +146,5 @@ def plot_data_BHFR(data, limited):
         plt.title('Share of blocks validated since The Merge.')
 
         plt.show()
-    except KeyError:
-        print('Error, model seems to have a required row name missing.')
+    except:
+        print('Error, model might have a required row name missing or the parameters given are incorrects.')
