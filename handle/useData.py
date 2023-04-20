@@ -100,8 +100,8 @@ def plot_data_BHMB(data, limited):
         plt.title('Miners weight in a sample of Blocks.')
 
         plt.show()
-    except KeyError:
-        print('Error, model seems to have a required row name missing.')
+    except:
+        print('Error, model might have a required row name missing or the parameters given are incorrects.')
 
 '''create a camembert view of the principals validators since eth2.0'''
 def plot_data_BHFR(data, limited):
@@ -146,5 +146,19 @@ def plot_data_BHFR(data, limited):
         plt.title('Share of blocks validated since The Merge.')
 
         plt.show()
-    except KeyError:
-        print('Error, model seems to have a required row name missing.')
+    except:
+        print('Error, model might have a required row name missing or the parameters given are incorrects.')
+
+def plot_data_BHBR(data):
+
+    finalData = []
+    for value in data['Block Reward']:
+        finalData.append(round(float(value), 3))
+
+    # Create histogram
+    plt.hist(finalData, bins=300, width=0.098, edgecolor='lightgrey')
+    plt.xlim(0.01, 0.9)
+    plt.xlabel('Reward Amount')
+    plt.ylabel('Frequency')
+    plt.title('Distribution of Ethereum Block Mining Rewards')
+    plt.show()

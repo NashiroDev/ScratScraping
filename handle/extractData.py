@@ -70,7 +70,7 @@ class Model:
                     cleanedField = field[0].replace(',', '')
                 else: cleanedField = field.replace(',', '')
 
-        elif type == ('Block Reward' or 'Burnt Fees'):
+        elif type == ('Block Reward' or 'Burnt Fees' or 'Size' or 'Transactions' or 'Block Reward' or 'Base Fee Per Gas'):
 
             field = field.split(' ')
             cleanedField = field[0]
@@ -80,15 +80,14 @@ class Model:
             field = field.split('in')
             cleanedField = field[0]
 
-        elif type == 'Transactions':
-
-            field = field.split(' ')
-            cleanedField = field[0]
-
         elif type == 'Gas Used':
             
             field = field.split('(')
             cleanedField = field[0]
+
+        elif type == 'Total Difficulty':
+
+            cleanedField = field.replace(',', '')
 
         elif type == 'Fee Recipient':
             if ' in 12 secs' in field:
