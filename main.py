@@ -58,6 +58,8 @@ def useModel(dataPath, userChoice):
         ud.plot_data_BHMB(data, limited)
     elif userChoice == 2:
         ud.plot_data_BHFR(data, limited)
+    elif userChoice == 3:
+        ud.plot_data_BHBR(data)
 
 
 if __name__ == "__main__":
@@ -117,9 +119,9 @@ if __name__ == "__main__":
 
         elif userInput == '3':
             files = listdir('data/model')
-            instructions = "Please select a function to run :\nud.plot_data_BHMB -> 1\nud.plot_data_BHFR -> 2\n>>>"
+            instructions = "Please select a function to run :\nud.plot_data_BHMB -> 1\nud.plot_data_BHFR -> 2\nud.plot_data_BHBR -> 3\n>>>"
 
-            userInput = askInt(instructions, "Error: index out of range.\n", [int(i) for i in range(1, 3)])
+            userInput = askInt(instructions, "Error: index out of range.\n", [int(i) for i in range(1, 4)])
             dataPath = askStr("Type the model file name to use (in /data/model) ?\n{}\n>>>".format(files), "Error: File does not exist in /data/model.\n", files)
             definitivePath = f"data/model/{dataPath}"
 
