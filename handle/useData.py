@@ -57,6 +57,13 @@ def filter_low_prices(data, ground):
     return data
 
 '''create a camembert view of the principals miners'''
+# La fonction plot_data_BHMB prend deux arguments en entrée: data qui est un dictionnaire représentant les données de la base de données, et limited qui est un entier qui limite le nombre de mineurs de blocs affichés dans le diagramme.
+
+# La fonction commence par initialiser une liste vide data2 qui stockera les noms des mineurs de blocs et le nombre de blocs qu'ils ont minés. Ensuite, elle parcourt les données de la base de données et compte le nombre de blocs minés par chaque mineur. Elle stocke les noms des mineurs de blocs et le nombre de blocs qu'ils ont minés dans la liste data2.
+
+# La fonction calcule ensuite les limited mineurs de blocs qui ont miné le plus grand nombre de blocs en triant la liste data2 dans l'ordre décroissant et en prenant les limited premiers éléments. Les autres mineurs sont regroupés dans une catégorie "autres" et leur nombre de blocs est ajouté à la liste finalData.
+
+# Enfin, la fonction utilise la bibliothèque matplotlib pour créer un diagramme circulaire à partir des données de finalData.
 def plot_data_BHMB(data, limited):
 
     data2 = [[], []]
@@ -104,6 +111,13 @@ def plot_data_BHMB(data, limited):
         print('Error, model might have a required row name missing or the parameters given are incorrects.')
 
 '''create a camembert view of the principals validators since eth2.0'''
+# La fonction plot_data_BHFR prend deux arguments en entrée: data qui est un dictionnaire représentant les données de la base de données, et limited qui est un entier qui limite le nombre de destinataires de frais affichés dans le diagramme.
+
+# La fonction commence par initialiser une liste vide data2 qui stockera les noms des destinataires de frais et le nombre de transactions avec ces destinataires. Ensuite, elle parcourt les données de la base de données et compte le nombre de transactions pour chaque destinataire de frais. Elle stocke les noms des destinataires de frais et le nombre de transactions dans la liste data2.
+
+# La fonction calcule ensuite les limited destinataires de frais qui ont reçu le plus grand nombre de transactions en triant la liste data2 dans l'ordre décroissant et en prenant les limited premiers éléments. Les autres destinataires sont regroupés dans une catégorie "autres" et leur nombre de transactions est ajouté à la liste finalData.
+
+# Enfin, la fonction utilise la bibliothèque matplotlib pour créer un diagramme circulaire à partir des données de finalData.
 def plot_data_BHFR(data, limited):
     data2 = [[], []]
     try:
@@ -149,6 +163,10 @@ def plot_data_BHFR(data, limited):
     except:
         print('Error, model might have a required row name missing or the parameters given are incorrects.')
 
+'''Create an histogram of the value distributed per block and their frequency'''
+# La fonction plot_data_BHBR prend en entrée un objet data qui contient les données de récompense de bloc Ethereum.
+
+# Dans cette fonction, les valeurs de récompense de bloc sont arrondies à trois décimales et stockées dans la liste finalData.
 def plot_data_BHBR(data):
 
     finalData = []

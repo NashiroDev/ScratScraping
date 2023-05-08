@@ -126,9 +126,3 @@ if __name__ == "__main__":
             definitivePath = f"data/model/{dataPath}"
 
             useModel(definitivePath, userInput)
-
-# ####### Prompt //~6250B/j moy //PoS : 15537393
-# s=15568147 #début scraping
-# e=16711850 #finishing
-# p=1 #Step/Nom du fichier de save eth{}.csv
-# multipleScrapAndSave(s, e, p)
